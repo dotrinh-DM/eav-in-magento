@@ -39,6 +39,13 @@ class Websgle_Blog_Block_Adminhtml_Post_Edit_Form extends Mage_Adminhtml_Block_W
             'url'      => 'url'
         ));
 
+        $fieldset->addField('image', 'file', array(
+            'name' => 'image',
+            'label'     => Mage::helper('blog')->__('Upload Images'),
+            'class'     => 'required-entry',
+            'required'  => true,
+        ));
+
         $fieldset->addField('content', 'textarea', array(
             'name' => 'content',
             'label'     => Mage::helper('blog')->__('Content'),

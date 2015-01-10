@@ -40,6 +40,14 @@ class Websgle_Blog_Adminhtml_PostController extends Mage_Adminhtml_Controller_Ac
     {
         $data = $this->getRequest()->getPost();
         $postId = $this->getRequest()->getParam('id');
+        if ($_FILES['image']['name'] != '') {
+            $path = Mage::getBaseDir('media') . DS . 'blog';
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+            $data['image'] = $this->uploadImgAction($_FILES['image']['name'], 'image', $path);
+        }
+
         try {
             $postModel = Mage::getModel('websgle_blog/post')->setData($data);
             if($postId){
@@ -55,4 +63,23 @@ class Websgle_Blog_Adminhtml_PostController extends Mage_Adminhtml_Controller_Ac
             Mage::getSingleton('adminhtml/session')->setFormData($data);
         }
     }
+
+    public function uploadImgAction($files_name, $prefix_name, $path)
+    {
+        try {
+            $fileName = $files_name;
+            $fileExt = strtolower(substr(strrchr($fileName, "."), 1));
+            $fileNamewoe = uniqid($prefix_name);
+            $fileName = str_replace(' ', '', $fileNamewoe) . '.' . $fileExt;
+            $uploader = new Varien_File_Uploader($prefix_name);
+            $uploader->setAllowedExtensions(array('jpg', 'jpeg', 'gif', 'png'));
+            $uploader->setAllowRenameFiles(false);
+            $uploader->setFilesDispersion(false);
+            $uploader->save($path, $fileName);
+            return $fileName;
+        } catch (Exception $e) {
+            Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+        }
+    }
+
 }
