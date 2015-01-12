@@ -46,12 +46,13 @@ class Websgle_Blog_Block_Adminhtml_Post_Edit_Form extends Mage_Adminhtml_Block_W
             'required'  => true,
         ));
 
-        $fieldset->addField('content', 'textarea', array(
+        $fieldset->addField('content', 'editor', array(
             'name' => 'content',
             'label'     => Mage::helper('blog')->__('Content'),
             'class'     => 'required-entry',
             'required'  => true,
-            'content'      => 'content'
+            'content'      => 'content',
+            'wysiwyg'   => true,
         ));
 
         $fieldset->addField('is_active', 'select', array(
