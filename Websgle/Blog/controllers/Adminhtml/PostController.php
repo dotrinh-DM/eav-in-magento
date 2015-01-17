@@ -82,4 +82,46 @@ class Websgle_Blog_Adminhtml_PostController extends Mage_Adminhtml_Controller_Ac
         }
     }
 
+    public function deleteAction()
+    {
+        if ($id = $this->getRequest()->getParam('id')) {
+            try {
+                $model = Mage::getModel('websgle_blog/post');
+                $model->setId($id);
+                $model->delete();
+                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('blog')->__('The post has been deleted.'));
+                $this->_redirect('*/*/');
+                return;
+            }
+            catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+                $this->_redirect('*/*/edit', array('id' => $id));
+                return;
+            }
+        }
+        Mage::getSingleton('adminhtml/session')->addError(Mage::helper('adminhtml')->__('Unable to find the post to delete.'));
+        $this->_redirect('*/*/');
+    }
+
+    public function massDeleteAction()
+    {
+        $postIds = $this->getRequest()->getParam('posts_id');
+        if (!is_array($postIds)) {
+            Mage::getSingleton('adminhtml/session')->addError(
+                Mage::helper('adminhtml')->__('Please select item(s)')
+            );
+        } else {
+            try {
+                foreach ($postIds as $postId) {
+                    $post_data = Mage::getModel('websgle_blog/post')->load($postId);
+                    $post_data->delete();
+                }
+                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('adminhtml')->__('Items(s) were successfully deleted'));
+            } catch (Exception $e) {
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            }
+        }
+        $this->_redirect('*/*/index');
+    }
+
 }
